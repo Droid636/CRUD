@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro</title>
+</head>
+<body>
+  <h2>Registro de Usuario</h2>
+  <form id="registroForm">
+    <input type="text" name="usuario" placeholder="Usuario" required>
+    <input type="password" name="contrasena" placeholder="Contraseña" required>
+    <select name="tipo" required>
+      <option value="admin">Admin</option>
+      <option value="docente">Docente</option>
+      <option value="alumno">Alumno</option>
+    </select>
+    <button type="submit">Registrar</button>
+  </form>
+
+  <script>
+    document.getElementById('registroForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        usuario: form.usuario.value,
+        contrasena: form.contrasena.value,
+        tipo: form.tipo.value
+      };
+
+      const res = await fetch('/api/crud/registro', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      if (res.ok) {
+        alert('Usuario registrado correctamente');
+        form.reset();
+      } else {
+        alert(result.mensaje);
+      }
+    });
+  </script>
+</body>
+</html>

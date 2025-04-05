@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+</head>
+<body>
+  <h2>Iniciar Sesión</h2>
+  <form id="loginForm">
+    <input type="text" name="usuario" placeholder="Usuario" required>
+    <input type="password" name="contrasena" placeholder="Contraseña" required>
+    <button type="submit">Entrar</button>
+  </form>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        usuario: form.usuario.value,
+        contrasena: form.contrasena.value
+      };
+
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      if (res.ok) {
+        localStorage.setItem('token', result.token);
+        localStorage.setItem('rol', result.rol);
+
+        // Redirigir según el rol
+        if (result.rol === 'admin') {
+          window.location.href = '/admin.html';
+        } else if (result.rol === 'docente') {
+          window.location.href = '/docente.html';
+        } else if (result.rol === 'alumno') {
+          window.location.href = '/alumno.html';
+        } else {
+          alert("Rol no reconocido");
+        }
+      } else {
+        alert(result.mensaje);
+      }
+    });
+  </script>
+</body>
+</html>
