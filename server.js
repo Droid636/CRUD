@@ -11,7 +11,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static('views'));
 
 // Conexión Mongo
 mongoose.connect(process.env.MONGO_URI)

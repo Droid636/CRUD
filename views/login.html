@@ -2,7 +2,34 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+    }
+
+    input, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
   <h2>Iniciar Sesión</h2>
@@ -15,35 +42,48 @@
   <script>
     document.getElementById('loginForm').addEventListener('submit', async e => {
       e.preventDefault();
+
       const form = e.target;
       const data = {
-        usuario: form.usuario.value,
+        usuario: form.usuario.value.trim(),
         contrasena: form.contrasena.value
       };
 
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-      });
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
 
-      const result = await res.json();
-      if (res.ok) {
-        localStorage.setItem('token', result.token);
-        localStorage.setItem('rol', result.rol);
+        const result = await res.json();
 
-        // Redirigir según el rol
-        if (result.rol === 'admin') {
-          window.location.href = '/admin.html';
-        } else if (result.rol === 'docente') {
-          window.location.href = '/docente.html';
-        } else if (result.rol === 'alumno') {
-          window.location.href = '/alumno.html';
+        if (res.ok) {
+          // Guardar token y rol
+          localStorage.setItem('token', result.token);
+          localStorage.setItem('rol', result.rol);
+
+          // Redirigir según el rol
+          switch (result.rol) {
+            case 'admin':
+              window.location.href = '/admin.html';
+              break;
+            case 'docente':
+              window.location.href = '/docente.html';
+              break;
+            case 'alumno':
+              window.location.href = '/alumno.html';
+              break;
+            default:
+              alert('Rol no reconocido');
+              break;
+          }
         } else {
-          alert("Rol no reconocido");
+          alert(result.mensaje || 'Error al iniciar sesión');
         }
-      } else {
-        alert(result.mensaje);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Hubo un problema al conectarse con el servidor.');
       }
     });
   </script>

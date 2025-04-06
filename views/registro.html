@@ -1,46 +1,99 @@
+<!-- registro.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Registro</title>
 </head>
 <body>
   <h2>Registro de Usuario</h2>
-  <form id="registroForm">
-    <input type="text" name="usuario" placeholder="Usuario" required>
-    <input type="password" name="contrasena" placeholder="Contraseña" required>
-    <select name="tipo" required>
-      <option value="admin">Admin</option>
-      <option value="docente">Docente</option>
+
+  <form id="form-registro">
+    <label for="rol">Selecciona Rol:</label>
+    <select id="rol" name="rol" required>
+      <option value="">-- Selecciona --</option>
       <option value="alumno">Alumno</option>
+      <option value="docente">Docente</option>
+      <option value="administrativo">Administrativo</option>
     </select>
-    <button type="submit">Registrar</button>
+
+    <div id="campos-dinamicos"></div>
+
+    <button type="submit">Registrarse</button>
   </form>
 
   <script>
-    document.getElementById('registroForm').addEventListener('submit', async e => {
+    const rolSelect = document.getElementById('rol');
+    const camposDinamicos = document.getElementById('campos-dinamicos');
+
+    rolSelect.addEventListener('change', () => {
+      const rol = rolSelect.value;
+      let campos = '';
+
+      if (rol === 'alumno') {
+        campos = `
+          <input type="text" name="idAlumno" placeholder="ID Alumno" required><br>
+          <input type="text" name="nombre" placeholder="Nombre" required><br>
+          <input type="text" name="apellidos" placeholder="Apellidos" required><br>
+          <input type="text" name="matricula" placeholder="Matrícula" required><br>
+          <input type="number" name="edad" placeholder="Edad" required><br>
+          <input type="tel" name="celular" placeholder="Celular" required><br>
+          <input type="text" name="curp" placeholder="CURP" required><br>
+          <input type="text" name="usuario" placeholder="Usuario" required><br>
+          <input type="password" name="password" placeholder="Contraseña" required><br>
+        `;
+      } else if (rol === 'docente') {
+        campos = `
+          <input type="text" name="idDocente" placeholder="ID Docente" required><br>
+          <input type="text" name="nombre" placeholder="Nombre" required><br>
+          <input type="text" name="apellidos" placeholder="Apellidos" required><br>
+          <input type="text" name="programaEducativo" placeholder="Programa Educativo" required><br>
+          <input type="text" name="numeroEmpleado" placeholder="Número de Empleado" required><br>
+          <input type="number" name="edad" placeholder="Edad" required><br>
+          <input type="tel" name="celular" placeholder="Celular" required><br>
+          <input type="text" name="curp" placeholder="CURP" required><br>
+          <input type="text" name="usuario" placeholder="Usuario" required><br>
+          <input type="password" name="password" placeholder="Contraseña" required><br>
+        `;
+      } else if (rol === 'administrativo') {
+        campos = `
+          <input type="text" name="nombre" placeholder="Nombre" required><br>
+          <input type="text" name="apellidos" placeholder="Apellidos" required><br>
+          <input type="text" name="usuario" placeholder="Usuario" required><br>
+          <input type="password" name="password" placeholder="Contraseña" required><br>
+        `;
+      }
+
+      camposDinamicos.innerHTML = campos;
+    });
+
+    document.getElementById('form-registro').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.target;
-      const data = {
-        usuario: form.usuario.value,
-        contrasena: form.contrasena.value,
-        tipo: form.tipo.value
-      };
-
-      const res = await fetch('/api/crud/registro', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-      });
-
-      const result = await res.json();
-      if (res.ok) {
-        alert('Usuario registrado correctamente');
-        form.reset();
-      } else {
-        alert(result.mensaje);
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+    
+      try {
+        const response = await fetch('/api/crud/registro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+    
+        const result = await response.json();
+    
+        if (!response.ok) {
+          alert(result.message || 'Error en el registro');
+          return;
+        }
+    
+        alert(result.message || 'Registro exitoso');
+      } catch (err) {
+        console.error('Error:', err);
+        alert('Error de conexión con el servidor');
       }
     });
+    
   </script>
 </body>
 </html>
