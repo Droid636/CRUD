@@ -23,7 +23,18 @@
     <button type="submit">Registrarse</button>
   </form>
 
+  <button onclick="cerrarSesion()">Cerrar sesión</button>
+
   <script>
+
+    function cerrarSesion() {
+      // Eliminar el token y rol del almacenamiento local
+      localStorage.removeItem('token');
+      localStorage.removeItem('rol');
+      window.location.href = '/login.html'; // Redirigir al login
+    }
+
+
     const rolSelect = document.getElementById('rol');
     const camposDinamicos = document.getElementById('campos-dinamicos');
 
