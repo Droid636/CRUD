@@ -58,5 +58,22 @@ router.get('/docentes', async (req, res) => {
     res.json(asignaturas);
   });
   
+  router.get('/horarios', async (req, res) => {
+    const { idAlumno } = req.query;
+    const horarios = await Horario.find({ idAlumno });
+    res.json(horarios);
+  });
 
+  // Obtener horarios por alumno
+  router.get('/horarios', async (req, res) => {
+    try {
+      const { idAlumno } = req.query;  // Recupera el id del alumno desde los query params
+      const horarios = await Horario.find({ alumno: idAlumno });  // Suponiendo que Horario es el modelo adecuado
+      res.json(horarios);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error al obtener los horarios');
+    }
+  });
+  
 module.exports = router;
