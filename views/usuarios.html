@@ -6,6 +6,8 @@
   <title>Usuarios Registrados</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./public/usuarios.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.24/jspdf.plugin.autotable.min.js"></script>  <!-- Añadir esto -->
 </head>
 <body>
   <h2>Visualización de Usuarios</h2>
@@ -15,11 +17,11 @@
     <button onclick="mostrarTabla('docentes')">Docentes</button>
     <button onclick="mostrarTabla('administrativos')">Administrativos</button>
     <button onclick="cerrarSesion()">Cerrar Sesión</button>
+    <button onclick="descargarPDF()">Descargar en PDF</button>  <!-- Botón de PDF -->
   </div>
 
   <!-- Tablas -->
-   <!-- Tablas -->
-   <div id="tabla-alumnos" class="oculto">
+  <div id="tabla-alumnos" class="oculto">
     <h3>Alumnos</h3>
     <table>
       <thead>
@@ -228,6 +230,67 @@
         alert('Error al actualizar usuario');
       }
     });
+
+    function descargarPDF() {
+      const { jsPDF } = window.jspdf; // Obtén la clase jsPDF de la librería
+      const doc = new jsPDF(); // Crea un nuevo documento PDF
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("Usuarios Registrados", 10, 10);
+    
+      let tableData = [];
+      let headers = [];
+    
+      // Determina qué tabla está visible y obtiene los datos correspondientes
+      if (document.getElementById('tabla-alumnos').classList.contains('oculto') === false) {
+        tableData = obtenerDatosDeTabla('tbody-alumnos');
+        headers = ['ID', 'Nombre', 'Apellidos', 'Matrícula', 'Edad', 'Celular', 'CURP', 'Usuario'];
+      } else if (document.getElementById('tabla-docentes').classList.contains('oculto') === false) {
+        tableData = obtenerDatosDeTabla('tbody-docentes');
+        headers = ['ID', 'Nombre', 'Apellidos', 'Programa Educativo', 'Número de Empleado', 'Edad', 'Celular', 'CURP', 'Usuario'];
+      } else if (document.getElementById('tabla-administrativos').classList.contains('oculto') === false) {
+        tableData = obtenerDatosDeTabla('tbody-administrativos');
+        headers = ['Nombre', 'Apellidos', 'Usuario']; // Solo los campos correspondientes para administrativos
+      }
+    
+      // Agregar los datos como lista en el PDF
+      let yPosition = 20; // Posición inicial para los textos de la lista
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(12);
+    
+      // Para cada fila de datos, agrega un bloque de texto (uno por ítem en la lista)
+      tableData.forEach((row) => {
+        headers.forEach((header, index) => {
+          const dataValue = row[index] || ''; // Si no hay dato, deja vacío
+          doc.text(`${header}: ${dataValue}`, 10, yPosition);
+          yPosition += 10; // Se mueve hacia abajo para el siguiente ítem
+        });
+        yPosition += 5; // Se deja espacio entre cada registro
+      });
+    
+      // Guardar el archivo PDF generado
+      doc.save('usuarios.pdf');
+    }
+    
+
+    function obtenerDatosDeTabla(tbodyId) {
+      const rows = document.getElementById(tbodyId).getElementsByTagName('tr');
+      const datos = [];
+
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.getElementsByTagName('td');
+        const rowData = [];
+
+        for (let j = 0; j < cells.length - 1; j++) {
+          rowData.push(cells[j].textContent);
+        }
+
+        datos.push(rowData);
+      }
+
+      return datos;
+    }
   </script>
 </body>
 </html>

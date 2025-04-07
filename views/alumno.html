@@ -42,6 +42,28 @@
 </head>
 <body>
   <h1>Bienvenido Alumno</h1>
+
+  <h2>Mis horarios</h2>
+  <ul id="listaHorarios"></ul>
+  
+  <script>
+    async function cargarHorarios() {
+      const idAlumno = localStorage.getItem('idAlumno');
+      const res = await fetch(`/api/gestion/horarios?alumno=${idAlumno}`);
+      const horarios = await res.json();
+      const lista = document.getElementById('listaHorarios');
+      lista.innerHTML = '';
+      horarios.forEach(h => {
+        const li = document.createElement('li');
+        li.textContent = `Fecha: ${h.fecha} - Asignatura ID: ${h.asignatura} - Docente ID: ${h.docente}`;
+        lista.appendChild(li);
+      });
+    }
+  
+    cargarHorarios();
+  </script>
+  
+
   <button onclick="cerrarSesion()">Cerrar sesión</button>
 
   <script>

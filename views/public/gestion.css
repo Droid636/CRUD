@@ -1,0 +1,75 @@
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #2C3E50; /* Fondo azul marino */
+      color: white; /* Texto blanco */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h2 {
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .seccion {
+      display: none;
+      margin-top: 20px;
+      width: 100%;
+      max-width: 600px;
+      background-color: #34495E; /* Fondo de formulario oscuro */
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .activo {
+      display: block;
+    }
+
+    button {
+      background-color: #2980B9; /* Azul más claro para botones */
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #3498DB; /* Azul más brillante al pasar el ratón */
+    }
+
+    input, select {
+      background-color: #2C3E50;
+      color: white;
+      border: 1px solid #2980B9;
+      border-radius: 5px;
+      padding: 10px;
+      width: 100%;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3498DB; /* Cambia el borde al enfocar el campo */
+    }
+
+    .container-buttons {
+      margin-bottom: 20px;
+    }
+
+    .container-buttons button {
+      margin-right: 10px;
+    }
+  

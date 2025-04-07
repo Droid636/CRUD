@@ -42,6 +42,29 @@
 </head>
 <body>
   <h1>Bienvenido Docente</h1>
+
+<h2>Asignaturas asignadas</h2>
+<ul id="listaAsignaturas"></ul>
+
+<script>
+  async function cargarAsignaturas() {
+    const idDocente = localStorage.getItem('idUsuario');
+    const res = await fetch(`/api/gestion/asignaturas?docente=${idDocente}`);
+    const asignaturas = await res.json();
+    const lista = document.getElementById('listaAsignaturas');
+    lista.innerHTML = '';
+    asignaturas.forEach(a => {
+      const li = document.createElement('li');
+      li.textContent = `${a.nombre} - ${a.programaEducativo}`;
+      lista.appendChild(li);
+    });
+  }
+
+  cargarAsignaturas();
+</script>
+
+
+
   <button onclick="cerrarSesion()">Cerrar sesión</button>
 
   <script>

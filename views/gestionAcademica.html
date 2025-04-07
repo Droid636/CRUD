@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión Académica</title>
+  <link rel="stylesheet" href="./public/gestion.css">
+</head>
+<body>
+
+  <h2>Panel de Administración</h2>
+
+  <div class="container-buttons">
+    <button onclick="mostrarSeccion('asignatura')">Crear Asignatura</button>
+    <button onclick="mostrarSeccion('aula')">Crear Aula</button>
+    <button onclick="mostrarSeccion('horario')">Crear Horario</button>
+  </div>
+
+  <!-- Sección Asignatura -->
+  <div id="asignatura" class="seccion">
+    <h2>Crear Asignatura</h2>
+    <form id="formAsignatura">
+      <input type="text" name="id_asignatura" placeholder="ID Asignatura" required>
+      <input type="text" name="nombre" placeholder="Nombre" required>
+      <input type="text" name="programa_educativo" placeholder="Programa Educativo" required>
+      <select name="id_docente" id="selectDocentes" required>
+        <option value="">Selecciona un Docente</option>
+      </select>
+      <button type="submit">Guardar</button>
+    </form>
+  </div>
+
+  <!-- Sección Aula -->
+  <div id="aula" class="seccion">
+    <h2>Crear Aula</h2>
+    <form id="formAula">
+      <input type="text" name="id_aula" placeholder="ID Aula" required>
+      <input type="text" name="descripcion" placeholder="Descripción" required>
+      <input type="text" name="proposito" placeholder="Propósito" required>
+      <button type="submit">Guardar</button>
+    </form>
+  </div>
+
+  <!-- Sección Horario -->
+  <div id="horario" class="seccion">
+    <h2>Crear Horario</h2>
+    <form id="formHorario">
+      <input type="text" name="id_horario" placeholder="ID Horario" required>
+      <input type="date" name="fecha" required>
+
+      <select name="id_docente" id="selectDocentesHorario" required>
+        <option value="">Selecciona un Docente</option>
+      </select>
+
+      <select name="id_estudiante" id="selectAlumnos" required>
+        <option value="">Selecciona un Estudiante</option>
+      </select>
+
+      <select name="id_asignatura" id="selectAsignaturas" required>
+        <option value="">Selecciona una Asignatura</option>
+      </select>
+
+      <button type="submit">Guardar</button>
+    </form>
+  </div>
+
+  <script>
+    // Función para mostrar/ocultar las secciones
+    function mostrarSeccion(id) {
+      // Ocultar todas las secciones
+      document.querySelectorAll('.seccion').forEach(sec => sec.classList.remove('activo'));
+      // Mostrar la sección correspondiente
+      document.getElementById(id).classList.add('activo');
+    }
+
+    // Asignatura
+    document.getElementById('formAsignatura').addEventListener('submit', async e => {
+      e.preventDefault();
+      const datos = Object.fromEntries(new FormData(e.target));
+      await fetch('/api/gestion/asignatura', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(datos)
+      });
+      alert('Asignatura creada');
+      e.target.reset();
+    });
+
+    // Aula
+    document.getElementById('formAula').addEventListener('submit', async e => {
+      e.preventDefault();
+      const datos = Object.fromEntries(new FormData(e.target));
+      await fetch('/api/gestion/aula', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(datos)
+      });
+      alert('Aula creada');
+      e.target.reset();
+    });
+
+    // Horario
+    document.getElementById('formHorario').addEventListener('submit', async e => {
+      e.preventDefault();
+      const datos = Object.fromEntries(new FormData(e.target));
+      await fetch('/api/gestion/horario', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(datos)
+      });
+      alert('Horario creado');
+      e.target.reset();
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const llenarSelect = async (endpoint, selectId, campo = "nombre") => {
+        const res = await fetch(`/api/gestion/${endpoint}`);
+        const data = await res.json();
+        const select = document.getElementById(selectId);
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item._id;
+          option.textContent = `${item.nombre} ${item.apellidos || ''}`.trim();
+          select.appendChild(option);
+        });
+      };
+    
+      // Llenar todos los selects necesarios
+      await llenarSelect('docentes', 'selectDocentes');
+      await llenarSelect('docentes', 'selectDocentesHorario');
+      await llenarSelect('alumnos', 'selectAlumnos');
+      await llenarSelect('asignaturas', 'selectAsignaturas');
+    });
+  </script>
+
+</body>
+</html>
