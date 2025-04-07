@@ -1,10 +1,94 @@
-<!-- registro.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Registro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background-color: #1E1E2F;
+      color: #FFFFFF;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      min-height: 100vh;
+      padding-top: 40px;
+    }
+
+    h2 {
+      color: #03A9F4;
+      margin-bottom: 20px;
+    }
+
+    form {
+      background-color: #2C2C3E;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.4);
+      max-width: 500px;
+      width: 90%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      color: #B0BEC5;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 8px;
+      background-color: #42425D;
+      color: #FFFFFF;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #03A9F4;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #0288D1;
+    }
+
+    .acciones {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .acciones button {
+      background-color: #FF5252;
+    }
+
+    .acciones button:hover {
+      background-color: #D32F2F;
+    }
+
+  </style>
 </head>
 <body>
   <h2>Registro de Usuario</h2>
@@ -23,94 +107,91 @@
     <button type="submit">Registrarse</button>
   </form>
 
-  <button onclick="cerrarSesion()">Cerrar sesión</button>
-  <button onclick="verUsuarios()">Ver usuarios registrados</button>
+  <div class="acciones">
+    <button onclick="cerrarSesion()">Cerrar sesión</button>
+    <button onclick="verUsuarios()">Ver usuarios registrados</button>
+  </div>
+
 <script>
   function verUsuarios() {
     window.location.href = '/usuarios.html';
   }
-  
-</script>
-  <script>
 
-    function cerrarSesion() {
-      // Eliminar el token y rol del almacenamiento local
-      localStorage.removeItem('token');
-      localStorage.removeItem('rol');
-      window.location.href = '/login.html'; // Redirigir al login
+  function cerrarSesion() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('rol');
+    window.location.href = '/login.html';
+  }
+
+  const rolSelect = document.getElementById('rol');
+  const camposDinamicos = document.getElementById('campos-dinamicos');
+
+  rolSelect.addEventListener('change', () => {
+    const rol = rolSelect.value;
+    let campos = '';
+
+    if (rol === 'alumno') {
+      campos = `
+        <input type="text" name="idAlumno" placeholder="ID Alumno" required>
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="text" name="apellidos" placeholder="Apellidos" required>
+        <input type="text" name="matricula" placeholder="Matrícula" required>
+        <input type="number" name="edad" placeholder="Edad" required>
+        <input type="tel" name="celular" placeholder="Celular" required>
+        <input type="text" name="curp" placeholder="CURP" required>
+        <input type="text" name="usuario" placeholder="Usuario" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
+      `;
+    } else if (rol === 'docente') {
+      campos = `
+        <input type="text" name="idDocente" placeholder="ID Docente" required>
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="text" name="apellidos" placeholder="Apellidos" required>
+        <input type="text" name="programaEducativo" placeholder="Programa Educativo" required>
+        <input type="text" name="numeroEmpleado" placeholder="Número de Empleado" required>
+        <input type="number" name="edad" placeholder="Edad" required>
+        <input type="tel" name="celular" placeholder="Celular" required>
+        <input type="text" name="curp" placeholder="CURP" required>
+        <input type="text" name="usuario" placeholder="Usuario" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
+      `;
+    } else if (rol === 'administrativo') {
+      campos = `
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="text" name="apellidos" placeholder="Apellidos" required>
+        <input type="text" name="usuario" placeholder="Usuario" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
+      `;
     }
 
+    camposDinamicos.innerHTML = campos;
+  });
 
-    const rolSelect = document.getElementById('rol');
-    const camposDinamicos = document.getElementById('campos-dinamicos');
+  document.getElementById('form-registro').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
 
-    rolSelect.addEventListener('change', () => {
-      const rol = rolSelect.value;
-      let campos = '';
+    try {
+      const response = await fetch('/api/crud/registro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
 
-      if (rol === 'alumno') {
-        campos = `
-          <input type="text" name="idAlumno" placeholder="ID Alumno" required><br>
-          <input type="text" name="nombre" placeholder="Nombre" required><br>
-          <input type="text" name="apellidos" placeholder="Apellidos" required><br>
-          <input type="text" name="matricula" placeholder="Matrícula" required><br>
-          <input type="number" name="edad" placeholder="Edad" required><br>
-          <input type="tel" name="celular" placeholder="Celular" required><br>
-          <input type="text" name="curp" placeholder="CURP" required><br>
-          <input type="text" name="usuario" placeholder="Usuario" required><br>
-          <input type="password" name="password" placeholder="Contraseña" required><br>
-        `;
-      } else if (rol === 'docente') {
-        campos = `
-          <input type="text" name="idDocente" placeholder="ID Docente" required><br>
-          <input type="text" name="nombre" placeholder="Nombre" required><br>
-          <input type="text" name="apellidos" placeholder="Apellidos" required><br>
-          <input type="text" name="programaEducativo" placeholder="Programa Educativo" required><br>
-          <input type="text" name="numeroEmpleado" placeholder="Número de Empleado" required><br>
-          <input type="number" name="edad" placeholder="Edad" required><br>
-          <input type="tel" name="celular" placeholder="Celular" required><br>
-          <input type="text" name="curp" placeholder="CURP" required><br>
-          <input type="text" name="usuario" placeholder="Usuario" required><br>
-          <input type="password" name="password" placeholder="Contraseña" required><br>
-        `;
-      } else if (rol === 'administrativo') {
-        campos = `
-          <input type="text" name="nombre" placeholder="Nombre" required><br>
-          <input type="text" name="apellidos" placeholder="Apellidos" required><br>
-          <input type="text" name="usuario" placeholder="Usuario" required><br>
-          <input type="password" name="password" placeholder="Contraseña" required><br>
-        `;
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.message || 'Error en el registro');
+        return;
       }
 
-      camposDinamicos.innerHTML = campos;
-    });
-
-    document.getElementById('form-registro').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-    
-      try {
-        const response = await fetch('/api/crud/registro', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-    
-        const result = await response.json();
-    
-        if (!response.ok) {
-          alert(result.message || 'Error en el registro');
-          return;
-        }
-    
-        alert(result.message || 'Registro exitoso');
-      } catch (err) {
-        console.error('Error:', err);
-        alert('Error de conexión con el servidor');
-      }
-    });
-    
-  </script>
+      alert(result.message || 'Registro exitoso');
+    } catch (err) {
+      console.error('Error:', err);
+      alert('Error de conexión con el servidor');
+    }
+  });
+</script>
 </body>
 </html>

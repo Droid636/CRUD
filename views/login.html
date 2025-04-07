@@ -3,41 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./public/login.css">
   <title>Iniciar Sesión</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      max-width: 400px;
-      margin: auto;
-    }
-
-    input, button {
-      display: block;
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 10px;
-      font-size: 16px;
-    }
-
-    button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-    }
-
-    button:hover {
-      background-color: #45a049;
-    }
-  </style>
+  
+ 
 </head>
 <body>
-  <h2>Iniciar Sesión</h2>
-  <form id="loginForm">
-    <input type="text" name="usuario" placeholder="Usuario" required>
-    <input type="password" name="contrasena" placeholder="Contraseña" required>
-    <button type="submit">Entrar</button>
-  </form>
+  <div class="login-container">
+    <div class="avatar">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+      </svg>
+    </div>
+    <form id="loginForm">
+      <div class="form-group">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M4 4h16v2H4zm0 6h10v2H4zm0 6h16v2H4z"/>
+        </svg>
+        <input type="text" name="usuario" placeholder="Email ID" required>
+      </div>
+      <div class="form-group">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-6V9a6 6 0 00-12 0v2a2 2 0 00-2 2v7h16v-7a2 2 0 00-2-2zM8 9a4 4 0 118 0v2H8V9z"/>
+        </svg>
+        <input type="password" name="contrasena" placeholder="Password" required>
+      </div>
+      <div class="remember-me">
+        <input type="checkbox" id="remember" name="remember">
+        <label for="remember">Recordarme</label>
+      </div>
+      <button type="submit">LOGIN</button>
+    </form>
+  </div>
 
   <script>
     document.getElementById('loginForm').addEventListener('submit', async e => {
@@ -59,11 +56,9 @@
         const result = await res.json();
 
         if (res.ok) {
-          // Guardar token y rol
           localStorage.setItem('token', result.token);
           localStorage.setItem('rol', result.rol);
 
-          // Redirigir según el rol
           switch (result.rol) {
             case 'admin':
               window.location.href = '/registro.html';
