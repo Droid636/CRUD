@@ -4,36 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Usuarios Registrados</title>
-  <style>
-    .oculto { display: none; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 6px;
-      text-align: left;
-    }
-    th {
-      background-color: #f0f0f0;
-    }
-    button {
-      margin: 5px;
-      padding: 8px 12px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./public/usuarios.css">
 </head>
 <body>
   <h2>Visualización de Usuarios</h2>
 
-  <button onclick="mostrarTabla('alumnos')">Alumnos</button>
-  <button onclick="mostrarTabla('docentes')">Docentes</button>
-  <button onclick="mostrarTabla('administrativos')">Administrativos</button>
-  <button onclick="cerrarSesion()">Cerrar Sesión</button>
+  <div style="text-align: center;">
+    <button onclick="mostrarTabla('alumnos')">Alumnos</button>
+    <button onclick="mostrarTabla('docentes')">Docentes</button>
+    <button onclick="mostrarTabla('administrativos')">Administrativos</button>
+    <button onclick="cerrarSesion()">Cerrar Sesión</button>
+  </div>
 
   <!-- Tablas -->
   <div id="tabla-alumnos" class="oculto">
