@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuarios Registrados</title>
+  <style>
+    .oculto { display: none; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: left;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>Visualización de Usuarios</h2>
+
+  <button onclick="mostrarTabla('alumnos')">Alumnos</button>
+  <button onclick="mostrarTabla('docentes')">Docentes</button>
+  <button onclick="mostrarTabla('administrativos')">Administrativos</button>
+  <button onclick="cerrarSesion()">Cerrar Sesión</button>
+
+  <!-- Tablas -->
+  <div id="tabla-alumnos" class="oculto">
+    <h3>Alumnos</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Matrícula</th>
+          <th>Edad</th>
+          <th>Celular</th>
+          <th>CURP</th>
+          <th>Usuario</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-alumnos"></tbody>
+    </table>
+  </div>
+
+  <div id="tabla-docentes" class="oculto">
+    <h3>Docentes</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Programa Educativo</th>
+          <th>Número de Empleado</th>
+          <th>Edad</th>
+          <th>Celular</th>
+          <th>CURP</th>
+          <th>Usuario</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-docentes"></tbody>
+    </table>
+  </div>
+
+  <div id="tabla-administrativos" class="oculto">
+    <h3>Administrativos</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Usuario</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-administrativos"></tbody>
+    </table>
+  </div>
+
+  <script>
+    function cerrarSesion() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('rol');
+      window.location.href = '/login.html';
+    }
+
+    async function mostrarTabla(tipo) {
+      // Oculta todas las tablas
+      document.getElementById('tabla-alumnos').classList.add('oculto');
+      document.getElementById('tabla-docentes').classList.add('oculto');
+      document.getElementById('tabla-administrativos').classList.add('oculto');
+
+      try {
+        const response = await fetch(`/api/usuarios/${tipo}`);
+        const datos = await response.json();
+
+        if (!response.ok) {
+          alert(datos.message || 'Error al obtener datos');
+          return;
+        }
+
+        if (tipo === 'alumnos') {
+          llenarTabla('tbody-alumnos', datos, ['idAlumno', 'nombre', 'apellidos', 'matricula', 'edad', 'celular', 'curp', 'usuario']);
+          document.getElementById('tabla-alumnos').classList.remove('oculto');
+        } else if (tipo === 'docentes') {
+          llenarTabla('tbody-docentes', datos, ['idDocente', 'nombre', 'apellidos', 'programaEducativo', 'numeroEmpleado', 'edad', 'celular', 'curp', 'usuario']);
+          document.getElementById('tabla-docentes').classList.remove('oculto');
+        } else if (tipo === 'administrativos') {
+          llenarTabla('tbody-administrativos', datos, ['nombre', 'apellidos', 'usuario']);
+          document.getElementById('tabla-administrativos').classList.remove('oculto');
+        }
+
+      } catch (error) {
+        console.error(error);
+        alert('Error de conexión al servidor');
+      }
+    }
+
+    function llenarTabla(tbodyId, data, campos) {
+      const tbody = document.getElementById(tbodyId);
+      tbody.innerHTML = '';
+
+      data.forEach(item => {
+        const fila = document.createElement('tr');
+        campos.forEach(campo => {
+          const td = document.createElement('td');
+          td.textContent = item[campo] || '';
+          fila.appendChild(td);
+        });
+        tbody.appendChild(fila);
+      });
+    }
+  </script>
+</body>
+</html>

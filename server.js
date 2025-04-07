@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const authRoutes = require('./routes/auth');
 const crudRoutes = require('./routes/crud');
+const usuariosRoutes = require('./routes/usuarios');
 
 dotenv.config();
 const app = express();
@@ -21,7 +22,7 @@ mongoose.connect(process.env.MONGO_URI)
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/crud', crudRoutes);
-
+app.use('/api/usuarios', usuariosRoutes);
 // HTML
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'login.html'));
