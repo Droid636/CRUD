@@ -1,18 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="UTF-8"><title>Alumno</title></head>
-<body>
-  
-  
-  <h1>Bienvenido Alumno</h1>
-<button onclick="cerrarSesion()">Cerrar sesión</button>
-<script>
-  function cerrarSesion() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('rol');
-    window.location.href = '/login.html';
-  }
-</script>
+<head>
+  <meta charset="UTF-8">
+  <title>Alumno</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(145deg, #1f1f2e, #2a2a40);
+      color: #fff;
+      text-align: center;
+      padding: 50px;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
 
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+    }
+
+    button {
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <h1>Bienvenido Alumno</h1>
+  <button onclick="cerrarSesion()">Cerrar sesión</button>
+
+  <script>
+    function cerrarSesion() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('rol');
+      window.location.href = '/login.html';
+    }
+  </script>
 </body>
 </html>
