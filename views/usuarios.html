@@ -18,7 +18,8 @@
   </div>
 
   <!-- Tablas -->
-  <div id="tabla-alumnos" class="oculto">
+   <!-- Tablas -->
+   <div id="tabla-alumnos" class="oculto">
     <h3>Alumnos</h3>
     <table>
       <thead>
@@ -31,6 +32,7 @@
           <th>Celular</th>
           <th>CURP</th>
           <th>Usuario</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody id="tbody-alumnos"></tbody>
@@ -51,6 +53,7 @@
           <th>Celular</th>
           <th>CURP</th>
           <th>Usuario</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody id="tbody-docentes"></tbody>
@@ -65,13 +68,28 @@
           <th>Nombre</th>
           <th>Apellidos</th>
           <th>Usuario</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody id="tbody-administrativos"></tbody>
     </table>
   </div>
 
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h3>Actualizar Usuario</h3>
+      <form id="form-actualizar">
+        <div id="campos-formulario"></div>
+        <button type="submit">Guardar cambios</button>
+        <button type="button" onclick="cerrarModal()">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
   <script>
+    let usuarioActual = null;
+    let tipoUsuarioActual = '';
+
     function cerrarSesion() {
       localStorage.removeItem('token');
       localStorage.removeItem('rol');
@@ -79,7 +97,6 @@
     }
 
     async function mostrarTabla(tipo) {
-      // Oculta todas las tablas
       document.getElementById('tabla-alumnos').classList.add('oculto');
       document.getElementById('tabla-docentes').classList.add('oculto');
       document.getElementById('tabla-administrativos').classList.add('oculto');
@@ -94,36 +111,123 @@
         }
 
         if (tipo === 'alumnos') {
-          llenarTabla('tbody-alumnos', datos, ['idAlumno', 'nombre', 'apellidos', 'matricula', 'edad', 'celular', 'curp', 'usuario']);
+          llenarTabla('tbody-alumnos', datos, ['idAlumno', 'nombre', 'apellidos', 'matricula', 'edad', 'celular', 'curp', 'usuario'], 'alumnos');
           document.getElementById('tabla-alumnos').classList.remove('oculto');
         } else if (tipo === 'docentes') {
-          llenarTabla('tbody-docentes', datos, ['idDocente', 'nombre', 'apellidos', 'programaEducativo', 'numeroEmpleado', 'edad', 'celular', 'curp', 'usuario']);
+          llenarTabla('tbody-docentes', datos, ['idDocente', 'nombre', 'apellidos', 'programaEducativo', 'numeroEmpleado', 'edad', 'celular', 'curp', 'usuario'], 'docentes');
           document.getElementById('tabla-docentes').classList.remove('oculto');
         } else if (tipo === 'administrativos') {
-          llenarTabla('tbody-administrativos', datos, ['nombre', 'apellidos', 'usuario']);
+          llenarTabla('tbody-administrativos', datos, ['nombre', 'apellidos', 'usuario'], 'administrativos');
           document.getElementById('tabla-administrativos').classList.remove('oculto');
         }
-
       } catch (error) {
         console.error(error);
         alert('Error de conexión al servidor');
       }
     }
 
-    function llenarTabla(tbodyId, data, campos) {
+    function llenarTabla(tbodyId, data, campos, tipo = '') {
       const tbody = document.getElementById(tbodyId);
       tbody.innerHTML = '';
 
       data.forEach(item => {
         const fila = document.createElement('tr');
+
         campos.forEach(campo => {
           const td = document.createElement('td');
           td.textContent = item[campo] || '';
           fila.appendChild(td);
         });
+
+        const tdAcciones = document.createElement('td');
+
+        const btnActualizar = document.createElement('button');
+        btnActualizar.textContent = 'Actualizar';
+        btnActualizar.onclick = () => mostrarModal(item, tipo);
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.onclick = () => eliminarUsuario(item._id, tipo);
+
+        tdAcciones.appendChild(btnActualizar);
+        tdAcciones.appendChild(btnEliminar);
+        fila.appendChild(tdAcciones);
+
         tbody.appendChild(fila);
       });
     }
+
+    function eliminarUsuario(id, tipo) {
+      if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+        fetch(`/api/usuarios/${tipo}/${id}`, {
+          method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message || 'Usuario eliminado');
+          mostrarTabla(tipo);
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Error al eliminar el usuario');
+        });
+      }
+    }
+
+    function mostrarModal(usuario, tipo) {
+      usuarioActual = usuario;
+      tipoUsuarioActual = tipo;
+
+      const campos = Object.keys(usuario).filter(key => key !== '_id' && key !== '__v');
+      const contenedor = document.getElementById('campos-formulario');
+      contenedor.innerHTML = '';
+
+      campos.forEach(campo => {
+        const label = document.createElement('label');
+        label.textContent = campo;
+
+        const input = document.createElement('input');
+        input.name = campo;
+        input.value = usuario[campo];
+
+        contenedor.appendChild(label);
+        contenedor.appendChild(input);
+      });
+
+      document.getElementById('modal').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+
+    document.getElementById('form-actualizar').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const datosActualizados = {};
+      for (const input of form.querySelectorAll('input')) {
+        datosActualizados[input.name] = input.value;
+      }
+
+      try {
+        const res = await fetch(`/api/usuarios/${tipoUsuarioActual}/${usuarioActual._id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(datosActualizados)
+        });
+
+        const result = await res.json();
+        alert(result.message || 'Usuario actualizado');
+        cerrarModal();
+        mostrarTabla(tipoUsuarioActual);
+      } catch (error) {
+        console.error(error);
+        alert('Error al actualizar usuario');
+      }
+    });
   </script>
 </body>
 </html>

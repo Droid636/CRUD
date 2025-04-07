@@ -36,6 +36,7 @@ app.get('/registro', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'registro.html'));
 });
 
+app.use(express.static(path.join(__dirname, 'views')));
 
 app.get('/admin.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'admin.html'));

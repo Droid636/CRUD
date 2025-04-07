@@ -31,4 +31,66 @@ router.get('/administrativos', async (req, res) => {
   }
 });
 
+
+
+// Eliminar Alumno
+router.delete('/alumnos/:id', async (req, res) => {
+    try {
+      await Alumno.findByIdAndDelete(req.params.id);
+      res.json({ message: 'Alumno eliminado correctamente' });
+    } catch (err) {
+      res.status(500).json({ message: 'Error al eliminar alumno' });
+    }
+  });
+  
+  // Actualizar Alumno
+  router.put('/alumnos/:id', async (req, res) => {
+    try {
+      const alumno = await Alumno.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      res.json(alumno);
+    } catch (err) {
+      res.status(500).json({ message: 'Error al actualizar alumno' });
+    }
+  });
+  
+  // Eliminar Docente
+  router.delete('/docentes/:id', async (req, res) => {
+    try {
+      await Docente.findByIdAndDelete(req.params.id);
+      res.json({ message: 'Docente eliminado correctamente' });
+    } catch (err) {
+      res.status(500).json({ message: 'Error al eliminar docente' });
+    }
+  });
+  
+  // Actualizar Docente
+  router.put('/docentes/:id', async (req, res) => {
+    try {
+      const docente = await Docente.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      res.json(docente);
+    } catch (err) {
+      res.status(500).json({ message: 'Error al actualizar docente' });
+    }
+  });
+  
+  // Eliminar Administrativo
+  router.delete('/administrativos/:id', async (req, res) => {
+    try {
+      await Admin.findByIdAndDelete(req.params.id);
+      res.json({ message: 'Administrativo eliminado correctamente' });
+    } catch (err) {
+      res.status(500).json({ message: 'Error al eliminar administrativo' });
+    }
+  });
+  
+  // Actualizar Administrativo
+  router.put('/administrativos/:id', async (req, res) => {
+    try {
+      const admin = await Admin.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      res.json(admin);
+    } catch (err) {
+      res.status(500).json({ message: 'Error al actualizar administrativo' });
+    }
+  });
+  
 module.exports = router;
